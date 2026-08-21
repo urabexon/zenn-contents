@@ -72,7 +72,9 @@ zenn-contents/
 - **削除はダッシュボードからのみ。** リポジトリにファイルが残っていると
   再デプロイで復活する。取り消すときは `articles/` からも消すこと
 
-## 確認済み
+## 連携の設定
 
-- **private リポジトリでも GitHub 連携は動く**（2026-08-22 に確認）
-- GitHub App の権限は `Only select repositories` でこのリポジトリだけ渡せば足りる
+- GitHub App の権限は `Only select repositories` で、このリポジトリだけ渡せば足りる
+- **private では記事が Zenn に出てこなかったため public にした**（2026-08-22）。
+  private が原理的に不可なのか、他の設定（同期ブランチ等）の問題だったのかは切り分けていない
+- Zenn 側のダッシュボードで「同期するブランチ」が `main` になっていることを確認する
