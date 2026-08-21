@@ -1,5 +1,7 @@
 # zenn-contents
 
+**English** · [日本語](./README.ja.md)
+
 Articles for [Zenn](https://zenn.dev/), assembled from my
 [til](https://github.com/urabexon/til) notes once enough of them have piled up.
 
