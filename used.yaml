@@ -1,3 +1,7 @@
 # 記事に使用済みの TIL エントリ。zenn-publish が追記する。
 # 手で編集してもよい（一度使ったものを再利用したい場合は行を消す）。
-used: []
+used:
+  - bash/command-substitution-strips-nul.md
+  - git/git-subcommands-are-just-executables.md
+  - git/list-what-git-add-all-would-stage.md
+  - macos/system-bash-is-still-3-2.md
