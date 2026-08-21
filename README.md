@@ -1,81 +1,94 @@
 # zenn-contents
 
-Zenn の記事。**til を素材にして、在庫がたまったら束ねて書く。**
+Articles for [Zenn](https://zenn.dev/), assembled from my
+[til](https://github.com/urabexon/til) notes once enough of them have piled up.
 
-til リポジトリは一切書き換えない（読むだけ）。
+The til repository is never modified — this one only reads from it.
 
-## なぜ「毎日投稿」にしないか
+Articles themselves are written in Japanese.
 
-毎日投稿が続かないのは意志ではなく設計の問題。
+## Why this fires on stock, not on time
 
-- **単位が大きい。** 記事1本は着手コストが高く、忙しい日に飛ぶ
-- **連続記録は壊れ方が悪い。** 一度切れると動機が一気にゼロになる
-- **仕事と切り離されている。** 独立した作業は他の作業に負ける
-- **白紙が重い。** 一番重いのは書くことではなく、何を書くか決めること
+Posting daily does not fail because of willpower. It fails because of how it is
+usually set up.
 
-なのでこのリポジトリは**時間ではなく在庫で発火する**。
-未使用の til エントリが閾値（既定5件）を超えたときだけ「書ける」と言う。
-何も学ばなかった日に、書く義務は発生しない。
+- **The unit is too large.** One article is a lot to start, so it gets skipped
+  on a busy day.
+- **Streaks break badly.** Once a streak is gone, so is the motivation that
+  depended on it.
+- **Writing is decoupled from the work.** An activity that competes with real
+  work for time will lose.
+- **The blank page is the expensive part.** Deciding *what* to write costs more
+  than writing it.
 
-## 使い方
+So this repository does not track days. It tracks **stock**: unused til entries.
+When the count crosses a threshold, it says an article is available. On a day
+when nothing was learned, it says nothing at all, and no obligation is created.
+
+## Usage
 
 ```sh
-# 1) 在庫を見る
+# 1. how much material is waiting
 ./scripts/zenn-status.sh
 
-# 2) 束ねて下書きを作る（素材は自動、繋ぎの文章は書かれない）
+# 2. bundle it into a draft — material is pasted in, prose is not
 ./scripts/zenn-draft.sh \
   --slug pitfalls-behind-one-shell-script \
   --title "..." --emoji "🪤" --topics bash,git,shell --pick bash,git
 
-# 3) TODO を埋める → プレビュー
+# 3. fill in the TODOs, then preview
 npx zenn preview
 
-# 4) articles/ に移す（--publish で published: true にする）
+# 4. move it into articles/ (--publish flips published to true)
 ./scripts/zenn-publish.sh 2026-08-22-pitfalls-behind-one-shell-script.md --publish
 ```
 
-`TIL_DIR` で素材の場所を変えられる（既定 `~/22.newurabe-project/til`）。
-`ZENN_THRESHOLD` で在庫の閾値を変えられる（既定 5）。
+`TIL_DIR` points at the source notes (default `~/22.newurabe-project/til`).
+`ZENN_THRESHOLD` sets the stock threshold (default 5).
 
-## 生成される下書き
+## What the generator does not do
 
-素材は自動で貼られるが、**3種類の TODO が残る**。
+A draft arrives with the material in place and **three kinds of TODO left**:
 
-- 導入 — この N 件がなぜ「ひとつの話」なのか
-- 繋ぎ — 項目から項目へ
-- まとめ — 読者が持ち帰るものを1つに
+- the introduction — why these N notes are one story
+- the transitions — how each item leads to the next
+- the conclusion — the single thing a reader should take away
 
-**ここが記事の価値そのもので、素材からは自動生成できない。**
-白紙は消えるが、書く仕事は消えない。
+That is the part the source notes cannot supply, and the part worth writing.
+The blank page disappears; the writing does not.
 
-## 構成
+## Layout
 
 ```
 zenn-contents/
-├── articles/     ← Zenn が読む。ここに置いた時点で公開対象
+├── articles/     ← Zenn reads this. Putting a file here is the publish decision
 ├── books/
-├── drafts/       ← Zenn は読まない。TODO を埋める場所
-├── used.yaml     ← 使用済みの til エントリ
+├── drafts/       ← Zenn ignores this. Where the TODOs get filled in
+├── used.yaml     ← til entries already spent on an article
 └── scripts/
     ├── zenn-status.sh
     ├── zenn-draft.sh
     └── zenn-publish.sh
 ```
 
-## Zenn 側の制約（実装で効いているもの）
+## Zenn constraints the scripts enforce
 
-- **ファイル名がスラッグ。** `a-z0-9_-` の 12〜50 文字。`zenn-draft.sh` が検査する
-- **topics は最大5個。** 同上
-- **`articles/` と `books/` はリポジトリ直下**でなければならない
-- **連携できるリポジトリは最大2つ**
-- **削除はダッシュボードからのみ。** リポジトリにファイルが残っていると
-  再デプロイで復活する。取り消すときは `articles/` からも消すこと
+- **The filename is the slug**: `a-z0-9_-`, 12–50 characters
+- **At most 5 topics**
+- **`articles/` and `books/` must sit at the repository root**
+- **At most 2 repositories** can be connected to a Zenn account
+- **Deletion happens in the Zenn dashboard only.** A file left in `articles/`
+  can come back on the next deploy, so remove it here as well
 
-## 連携の設定
+## Notes on the GitHub integration
 
-- GitHub App の権限は `Only select repositories` で、このリポジトリだけ渡せば足りる
-- **private では記事が出てこない。public にした瞬間に下書きが現れた**（2026-08-22 に確認）。
-  可視性だけを変えて再現しているので、原因は private であること自体とみてよい。
-  Zenn に記事を出す以上どのみち内容は公開されるので、リポジトリを private にする意味は薄い
-- Zenn 側のダッシュボードで「同期するブランチ」が `main` になっていることを確認する
+- Granting the GitHub App access to this repository alone
+  (`Only select repositories`) is enough.
+- **A private repository does not deploy.** Nothing errors: the App grants
+  access, Zenn lists the repository, the push succeeds, and no article appears.
+  Making the repository public surfaced the draft immediately. Since visibility
+  was the only thing that changed, that is the cause.
+  Keeping it private buys little anyway — anything under `articles/` is meant to
+  be public, and unfinished work can live in `drafts/`, which Zenn never reads.
+- Check that the branch Zenn syncs is the one you push to; the default is not
+  always `main`.
